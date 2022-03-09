@@ -1,0 +1,28 @@
+﻿@page "/ipaddress"
+@inject HttpClient Http
+
+<PageTitle>IP Address</PageTitle>
+
+<h1>IP Address Getter</h1>
+
+<ul>
+    <li>
+        <input @bind="ipAddress.IP" />
+    </li>
+</ul>
+
+<button @onclick="AddTodo">Get My IP Address</button>
+
+@code {
+    private IPAddressItem ipAddress = new();
+
+    private async Task AddTodo()
+    {
+        Uri uri = new Uri("http://ip.jsontest.com/");
+        var ip =  await Http.GetFromJsonAsync<IPAddressItem>(uri);
+
+        if( ip is not null ) {
+            ipAddress = ip;
+        }
+    }
+}
