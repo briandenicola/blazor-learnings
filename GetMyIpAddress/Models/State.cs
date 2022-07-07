@@ -1,6 +1,6 @@
-namespace todoui.Shared;
+namespace GetMyIpAddress.Shared;
 
-public class  TodoUiState
+public class UiState
 {
     public void SetIPAddress(IPAddressItem publicIPAddress) 
     {

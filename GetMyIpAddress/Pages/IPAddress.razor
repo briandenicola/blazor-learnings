@@ -1,6 +1,6 @@
 ﻿@page "/ipaddress"
 @inject HttpClient Http
-@inject TodoUiState TodoState
+@inject UiState StateMgmt
 
 <PageTitle>IP Address</PageTitle>
 
@@ -8,23 +8,22 @@
 
 <ul>
     <li>
-        <input @bind="ip.IP" />
+        <input @bind="ip.address" />
     </li>
 </ul>
 
-<button @onclick="AddTodo">Get My IP Address</button>
+<button @onclick="GetIpAddress">Get My IP Address</button>
 
 @code {
-    //IPAddressItem ip => TodoState.ipaddress;
     IPAddressItem ip = new();
 
-    private async Task AddTodo()
+    private async Task GetIpAddress()
     {
         Uri uri = new Uri("http://ip.jsontest.com/");
-        ip =  await Http.GetFromJsonAsync<IPAddressItem>(uri);
+        ip = await Http.GetFromJsonAsync<IPAddressItem>(uri);
 
         if( ip is not null ) {
-            TodoState.ipaddress = ip;
+            StateMgmt.ipaddress = ip;
         }
     }
 }
