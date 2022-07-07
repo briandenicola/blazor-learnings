@@ -1,7 +1,74 @@
 ﻿@page "/"
+@inject HttpClient Http
+@using System.Net.Http
+@using System.Net
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Bitcoin Price Tracker</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Bitcoin Price Tracker</h1>
+<table>
+    <tr>
+        <td width=75%><b>Time</b></td>
+        <td></td>
+        <td width=25%><b>Price</b></td>
+    </tr>
+    <tr>
+        <td>@bitcoin.time.updated</td>
+        <td></td>
+        <td>@(WebUtility.HtmlDecode(@bitcoin.bpi.USD.symbol)) @bitcoin.bpi.USD.rate</td>
+    </tr>
+</table>
+<p><i>Price will update every 60 seconds </i></p>
+<button @onclick="UpdatePrice">Manually Update Price</button>
 
-Welcome to your new app.
+@code {
+    public class CoinDeskItem
+    {
+        public BitCoinByDenomination bpi { get; set; } = new();
+        public String chartName { get; set; } = String.Empty;
+        public String disclaimer { get; set; } = String.Empty;
+        public CoinDeskDateTime time { get; set; } = new();
+    }
+
+    public class BitCoinByDenomination
+    {
+        public BitCoinPrice USD { get; set; } = new();
+        public BitCoinPrice GBP { get; set; } = new();
+        public BitCoinPrice EUR { get; set; } = new();
+    }
+    public class BitCoinPrice 
+    {
+        public String code { get; set; } = String.Empty;
+        public String description { get; set; } = String.Empty;
+        public String rate { get; set; } = String.Empty;
+        public Double rate_float { get; set; } = 0.00;
+        public String symbol { get; set; }= String.Empty;
+    }
+
+    public class CoinDeskDateTime
+    {
+        public String updated { get; set; } = String.Empty;
+        public String updatedISO { get; set; } = String.Empty;
+        public String updateduk { get; set; } = String.Empty;
+    }
+
+    private CoinDeskItem bitcoin = new();
+    private System.Threading.Timer? timer;
+
+    public async Task UpdatePrice() =>
+        bitcoin = await Http.GetFromJsonAsync<CoinDeskItem>("v1/bpi/currentprice.json") ?? new();
+
+    public void ScheduleFutureTasks() 
+    {
+        timer = new System.Threading.Timer( async (object? stateInfo) => {
+            await UpdatePrice();
+			StateHasChanged(); 
+		}, new System.Threading.AutoResetEvent(false), 60000, 60000); 
+    }
+
+    protected override async Task OnInitializedAsync() 
+    {
+        await UpdatePrice();
+        ScheduleFutureTasks();
+    } 
+}
