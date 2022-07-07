@@ -11,19 +11,36 @@
         <input @bind="ip.address" />
     </li>
 </ul>
+<p><i>Source: @source</i></p>
 
 <button @onclick="GetIpAddress">Get My IP Address</button>
 
 @code {
     IPAddressItem ip = new();
+    String source = String.Empty;
 
     private async Task GetIpAddress()
     {
         Uri uri = new Uri("http://ip.jsontest.com/");
-        ip = await Http.GetFromJsonAsync<IPAddressItem>(uri);
+        ip = await Http.GetFromJsonAsync<IPAddressItem>(uri) ?? new();
 
         if( ip is not null ) {
             StateMgmt.ipaddress = ip;
         }
+
+        source = "http://ip.jsontest.com/";
     }
+
+    private void ReadfromState()
+    {   
+        if( StateMgmt.ipaddress.address is not null ) {
+            ip = StateMgmt.ipaddress;
+            source = "Cache";
+        }
+    }
+
+    protected override void OnInitialized() 
+    {
+        ReadfromState();
+    } 
 }
