@@ -27,19 +27,20 @@
     private System.Threading.Timer? timer;
 
     public async Task UpdatePrice() =>
-        bitcoin = await Http.GetFromJsonAsync<CoinDeskItem>("v1/bpi/currentprice.json") ?? new();
+    bitcoin = await Http.GetFromJsonAsync<CoinDeskItem>("v1/bpi/currentprice.json") ?? new();
 
-    public void ScheduleFutureTasks() 
+    public void ScheduleFutureTasks()
     {
-        timer = new System.Threading.Timer( async (object? stateInfo) => {
+        timer = new System.Threading.Timer(async (object? stateInfo) =>
+        {
             await UpdatePrice();
-			StateHasChanged(); 
-		}, new System.Threading.AutoResetEvent(false), 60000, 60000); 
+            StateHasChanged();
+        }, new System.Threading.AutoResetEvent(false), 60000, 60000);
     }
 
-    protected override async Task OnInitializedAsync() 
+    protected override async Task OnInitializedAsync()
     {
         await UpdatePrice();
         ScheduleFutureTasks();
-    } 
+    }
 }

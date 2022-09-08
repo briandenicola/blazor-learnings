@@ -14,13 +14,13 @@ public class BitCoinByDenomination
     public BitCoinPrice GBP { get; set; } = new();
     public BitCoinPrice EUR { get; set; } = new();
 }
-public class BitCoinPrice 
+public class BitCoinPrice
 {
     public String code { get; set; } = String.Empty;
     public String description { get; set; } = String.Empty;
     public String rate { get; set; } = String.Empty;
     public Double rate_float { get; set; } = 0.00;
-    public String symbol { get; set; }= String.Empty;
+    public String symbol { get; set; } = String.Empty;
 }
 
 public class CoinDeskDateTime
